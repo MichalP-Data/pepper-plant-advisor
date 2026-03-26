@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hot Pepper Grow Assistant</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(0,0,0,0.06)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --shell-bg: rgba(255, 255, 255, 0.78);
+      --shell-border: rgba(255, 255, 255, 0.55);
+    }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background:
+        linear-gradient(rgba(248,250,252,0.88), rgba(248,250,252,0.92)),
+        url('https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+    }
+
+    .app-shell {
+      min-height: 100dvh;
+      padding: 12px;
+    }
+
+    .glass-card {
+      background: var(--shell-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--shell-border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .hero-panel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(220,38,38,0.10), transparent 30%),
+        radial-gradient(circle at 80% 30%, rgba(22,163,74,0.08), transparent 28%),
+        radial-gradient(circle at 40% 80%, rgba(239,68,68,0.08), transparent 30%);
+      pointer-events: none;
+    }
+
+    .story-copy {
+      color: rgba(17, 24, 39, 0.72);
+    }
+
+    .story-card {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(229,231,235,0.9);
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .messages {
+      overflow-y: auto;
+      padding: 0.875rem;
+      scrollbar-width: thin;
+    }
+
+    .assistant-bubble {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      color: #1f2937;
+    }
+
+    .user-bubble {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #14532d;
+    }
+
+    .bubble-soft {
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .chat-input-zone {
+      border-top: 1px solid rgba(229,231,235,0.9);
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    /* MOBILE FIRST */
+    .desktop-frame {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .hero-panel,
+    .chat-panel {
+      border-radius: 1.5rem;
+    }
+
+    .hero-panel {
+      padding: 1.25rem;
+    }
+
+    .chat-panel {
+      min-height: 60vh;
+    }
+
+    .messages {
+      min-height: 280px;
+      max-height: 50vh;
+    }
+
+    /* SMALL+ */
+    @media (min-width: 640px) {
+      .app-shell {
+        padding: 16px;
+      }
+
+      .desktop-frame {
+        gap: 16px;
+      }
+
+      .hero-panel,
+      .chat-panel {
+        border-radius: 1.75rem;
+      }
+
+      .hero-panel {
+        padding: 1.5rem;
+      }
+
+      .chat-panel {
+        min-height: 62vh;
+      }
+
+      .messages {
+        padding: 1rem;
+        min-height: 320px;
+        max-height: 52vh;
+      }
+    }
+
+    /* TABLET */
+    @media (min-width: 768px) {
+      .desktop-frame {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .hero-panel {
+        padding: 1.75rem;
+      }
+
+      .chat-panel {
+        min-height: 68vh;
+      }
+
+      .messages {
+        max-height: 56vh;
+      }
+    }
+
+    /* DESKTOP */
+    @media (min-width: 1024px) {
+      body {
+        overflow: hidden;
+      }
+
+      .app-shell {
+        height: 100dvh;
+        min-height: 100dvh;
+        padding: 16px;
+      }
+
+      .desktop-frame {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        height: calc(100dvh - 32px);
+        max-width: 1400px;
+      }
+
+      .hero-panel {
+        grid-column: span 5 / span 5;
+        min-height: 0;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .chat-panel {
+        grid-column: span 7 / span 7;
+        min-height: 0;
+        height: 100%;
+      }
+
+      .messages {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        padding: 1rem 1rem 0.75rem;
+      }
+    }
+
+    /* LARGE DESKTOP */
+    @media (min-width: 1280px) {
+      .hero-panel {
+        padding: 2.25rem;
+      }
+
+      .messages {
+        padding: 1.25rem 1.25rem 0.875rem;
+      }
+    }
+  </style>
+</head>
+<body class="text-base-content">
+
+  <main class="app-shell">
+    <div class="desktop-frame">
+
+      <!-- LEFT -->
+      <section class="glass-card hero-panel min-h-[unset]">
+        <div class="relative z-10">
+          <div class="badge badge-outline mb-4 px-4 py-3 text-xs sm:text-sm font-medium">
+            🌶️ Pepper Growing Companion
+          </div>
+
+          <h1 class="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+            Hot Pepper<br>
+            Grow Assistant
+          </h1>
+
+          <p class="mt-4 max-w-xl text-sm sm:text-base lg:text-lg leading-6 sm:leading-7 story-copy">
+            A calm, focused assistant for growers who want fast answers about germination,
+            watering, nutrients, pests, lighting, and healthy chili development.
+          </p>
+        </div>
+
+        <div class="relative z-10 mt-6 grid gap-3">
+          <div class="story-card rounded-2xl p-4 sm:p-5">
+            <h2 class="text-sm sm:text-base font-semibold">What this is</h2>
+            <p class="mt-2 text-sm sm:text-[15px] leading-6 story-copy">
+              Think of it like a minimalist grow journal companion — ask practical questions,
+              troubleshoot issues, and get quick cultivation guidance without noisy UI.
+            </p>
+          </div>
+
+          <div class="story-card rounded-2xl p-4 sm:p-5">
+            <h2 class="text-sm sm:text-base font-semibold">Typical topics</h2>
+            <p class="mt-2 text-sm sm:text-[15px] leading-6 story-copy">
+              Seed starting, leaf discoloration, overwatering, grow lights, repotting,
+              airflow, flowering, fruiting, and pepper variety differences.
+            </p>
+          </div>
+
+          <p class="px-1 text-xs sm:text-sm leading-5 text-base-content/55">
+            General gardening advice only. Not a substitute for professional medical,
+            toxicological, or regulatory guidance.
+          </p>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="glass-card chat-panel">
+        <div class="flex items-center justify-between px-4 sm:px-5 lg:px-6 py-4 border-b border-base-200/80">
+          <div>
+            <h2 class="text-base sm:text-lg font-semibold">Chat</h2>
+            <p class="text-xs sm:text-sm text-base-content/60">Ask one clear question at a time</p>
+          </div>
+          <div class="hidden sm:flex badge badge-ghost">
+            Live assistant
+          </div>
+        </div>
+
+        <div class="messages" id="chat">
+          {% for msg in messages %}
+            <div class="mb-4 flex {% if msg.role == 'user' %}justify-end{% else %}justify-start{% endif %}">
+              <div class="bubble-soft max-w-[92%] sm:max-w-[82%] lg:max-w-[80%] rounded-3xl px-4 py-3 sm:px-5 sm:py-4 {% if msg.role == 'user' %}user-bubble{% else %}assistant-bubble{% endif %}">
+                <div class="mb-1 flex items-center gap-2">
+                  <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.12em] text-base-content/45">
+                    {{ msg.role|capfirst }}
+                  </span>
+                  <span class="text-[10px] sm:text-xs text-base-content/35">
+                    {{ msg.created_at|date:"SHORT_DATETIME_FORMAT" }}
+                  </span>
+                </div>
+                <div class="whitespace-pre-wrap text-sm sm:text-[15px] leading-6">
+                  {{ msg.content }}
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <div class="flex h-full items-center justify-center py-10">
+              <div class="max-w-md text-center px-4">
+                <div class="mb-3 text-4xl">🌱</div>
+                <h3 class="text-xl sm:text-2xl font-semibold">Start the conversation</h3>
+                <p class="mt-2 text-sm sm:text-base leading-6 text-base-content/60">
+                  Try asking about germination, watering schedule, pests, or why leaves are curling.
+                </p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="chat-input-zone p-3 sm:p-4 lg:p-5">
+          <form method="post" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+            {% csrf_token %}
+
+            <label class="form-control flex-1">
+              <div class="label pb-2">
+                <span class="label-text text-xs sm:text-sm font-medium text-base-content/65">
+                  Your message
+                </span>
+              </div>
+              <textarea
+                name="content"
+                rows="3"
+                maxlength="2000"
+                placeholder="Ask about pepper cultivation..."
+                class="textarea textarea-bordered w-full rounded-2xl border-base-300 bg-white text-sm sm:text-[15px] leading-6 px-4 py-3"
+              ></textarea>
+            </label>
+
+            <button
+              type="submit"
+              class="btn btn-primary rounded-2xl min-h-[52px] px-6 text-sm sm:text-[15px] font-semibold"
+            >
+              Send
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const chat = document.getElementById('chat');
+    if (chat) {
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>

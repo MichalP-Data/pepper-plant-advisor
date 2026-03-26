@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat o paprykach</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #fff8f0;
+        }
+        h1 {
+            color: #b22222;
+        }
+        form {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #ffe4d6;
+            border-radius: 12px;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #b22222;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .message {
+            background: white;
+            border-left: 5px solid #b22222;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌶️ Chat o paprykach</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Nick:</label>
+        <input type="text" name="username" required>
+
+        <label>Wiadomość:</label>
+        <textarea name="content" rows="4" required></textarea>
+
+        <button type="submit">Wyślij</button>
+    </form>
+
+    <h2>Ostatnie wiadomości</h2>
+
+    {% for message in messages %}
+        <div class="message">
+            <div class="meta">
+                <strong>{{ message.username }}</strong> |
+                {{ message.created_at }}
+            </div>
+            <div>{{ message.content }}</div>
+        </div>
+    {% empty %}
+        <p>Na razie cisza. Kto pierwszy napisze o habanero?</p>
+    {% endfor %}
+</body>
+</html>
