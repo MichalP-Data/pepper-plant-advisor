@@ -1,7 +1,6 @@
 
 # Pepper Chat — Quick start
 
-No bullshit. Short, clear steps to run this Django project.
 
 Project: Django (created with Django 6.0.3). DB: SQLite (db.sqlite3).
 
@@ -112,7 +111,5 @@ docker run -p 8000:8000 -e DJANGO_SECRET_KEY="change-me" pepper-assistant
 ```
 
 
-
-Keep it moving. Must go on.
 
 
